@@ -6,7 +6,8 @@ class GridGame(ABC):
         self.n_rows = n_rows
         self.n_cols = n_cols
         self.n_actions = action_size or (n_rows * n_cols)
-
+        self.in_a_row = in_a_row
+        
     def __repr__(self):
         return self.__class__.__name__
 
