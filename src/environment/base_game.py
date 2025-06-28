@@ -2,11 +2,10 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 class GridGame(ABC):
-    def __init__(self, n_rows, n_cols, action_size=None, in_a_row=None):
+    def __init__(self, n_rows, n_cols, action_size=None):
         self.n_rows = n_rows
         self.n_cols = n_cols
         self.n_actions = action_size or (n_rows * n_cols)
-        self.in_a_row = in_a_row
         
     def __repr__(self):
         return self.__class__.__name__

@@ -242,14 +242,15 @@ class AlphaZero:
             for epoch in trange(self.args["n_epochs"]):
                 self.train(memory)
 
-            os.makedirs("checkpoints", exist_ok=True)
+            checkpoints_dir = self.args["checkpoints_dir"]
+            os.makedirs(checkpoints_dir, exist_ok=True)
             torch.save(
                 self.model.state_dict(),
-                f"checkpoints/model_{self.game}_{iteration}.pt",
+                f"{checkpoints_dir}/model_{self.game}_{iteration}.pt",
             )
             torch.save(
                 self.optimizer.state_dict(),
-                f"checkpoints/optimizer_{self.game}_{iteration}.pt",
+                f"{checkpoints_dir}/optimizer_{self.game}_{iteration}.pt",
             )
 
 
