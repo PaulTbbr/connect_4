@@ -1,5 +1,3 @@
-from typing import Optional
-
 import numpy as np
 
 from src.environment.base_game import GridGame
@@ -7,7 +5,8 @@ from src.environment.base_game import GridGame
 
 class ConnectFour(GridGame):
     def __init__(self) -> None:
-        super().__init__(n_rows=6, n_cols=7, action_size=7, in_a_row=4)
+        super().__init__(n_rows=6, n_cols=7, action_size=7)
+        self.in_a_row = 4
 
     def get_next_state(
         self, state: np.ndarray, action: int, player: int
@@ -19,12 +18,13 @@ class ConnectFour(GridGame):
     def get_valid_moves(self, state: np.ndarray) -> np.ndarray:
         return (state[0] == 0).astype(np.uint8)
 
-    def check_win(
-        self, state: np.ndarray, action: Optional[int]
-    ) -> bool:
+    def check_win(self, state, action):
+        if action is None:
+            return False
+
         row = np.min(np.where(state[:, action] != 0))
         column = action
-        player = state[row][column]
+        player = state[row, column]
 
         def count(offset_row, offset_column):
             for i in range(1, self.in_a_row):
@@ -47,6 +47,34 @@ class ConnectFour(GridGame):
             or (count(1, -1) + count(-1, 1)) >= self.in_a_row - 1 # top right diagonal
         )
     
+    
+    def render(self, state: np.ndarray, show_columns: bool = True) -> None:
+        print()
+        
+        if show_columns:
+            print("  ", end="")
+            for col in range(self.n_cols):
+                print(f"  {col} ", end=" ")
+            print()
+        
+        print("  " + "┌" + "────┬" * (self.n_cols - 1) + "────┐")
+        for row in range(self.n_rows):
+            print("  │", end="")
+            for col in range(self.n_cols):
+                cell_value = state[row, col]
+                if cell_value == 1:
+                    symbol = " 🔴"
+                elif cell_value == -1:
+                    symbol = " 🟡" 
+                else:
+                    symbol = "   "
+                print(symbol, end=" │")
+            print()
+            if row < self.n_rows - 1:
+                print("  ├" + "────┼" * (self.n_cols - 1) + "────┤")
+        print("  └" + "────┴" * (self.n_cols - 1) + "────┘")
+        print()
+
 
 if __name__ == "__main__":
     game = ConnectFour()
