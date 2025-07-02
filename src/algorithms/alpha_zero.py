@@ -234,7 +234,7 @@ class AlphaZero:
 
             print("Self-play...")
             self.model.eval()
-            for self_play_iteration in trange(self.args["n_self_play_iterations"]):
+            for _ in trange(self.args["n_self_play_iterations"]):
                 memory += self.self_play()
 
             print("Training...")

@@ -51,5 +51,8 @@ class GridGame(ABC):
 
     def get_encoded_state(self, state: np.ndarray) -> np.ndarray:
         """One-hot encode state into planes for -1, 0, +1."""
-        return np.stack((state == -1, state == 0, state == 1)).astype(np.float32)
+        encoded_state = np.stack((state == -1, state == 0, state == 1)).astype(np.float32)
+        if len(state.shape) == 3:
+            encoded_state = np.swapaxes(encoded_state, 0, 1) # (3, B, R, C) -> (B, 3, R, C)
+        return encoded_state
 
