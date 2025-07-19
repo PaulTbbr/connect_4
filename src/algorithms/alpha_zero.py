@@ -173,7 +173,7 @@ class AlphaZero:
                 temp_action_probs /= np.sum(temp_action_probs)
                 action = np.random.choice(self.game.n_actions, p=temp_action_probs)
 
-            state = self.game.get_next_state(neutral_state, action, player)
+            state = self.game.get_next_state(state, action, player)
 
             value, is_terminal = self.game.get_value_and_terminated(state, action)
 
