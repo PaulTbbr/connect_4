@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 import torch
 
-from src.algorithms import MCTS, AlphaMCTS, AlphaZero, ResNet
+from src.algorithms import MCTS, AlphaMCTS, AlphaZero, ResNet, AlphaZeroParallel, AlphaMCTSParallel
 from src.environment import ConnectFour, TicTacToe
 
 
@@ -23,7 +23,10 @@ def train(args):
     optimizer = torch.optim.Adam(
         model.parameters(), lr=args.lr, weight_decay=args.weight_decay
     )
-    az = AlphaZero(model, optimizer, game, vars(args))
+    if args.parallel:
+        az = AlphaZeroParallel(model, optimizer, game, vars(args))
+    else:
+        az = AlphaZero(model, optimizer, game, vars(args))
     az.learn()
 
 
@@ -119,6 +122,8 @@ if __name__ == "__main__":
     p_train.add_argument("--dirichlet_epsilon", type=float, default=0.25)
     p_train.add_argument("--dirichlet_alpha", type=float, default=0.3)
     p_train.add_argument("--checkpoints_dir", type=str, default="checkpoints")
+    p_train.add_argument("--parallel", action="store_true")
+    p_train.add_argument("--n_parallel_games", type=int, default=100)
     p_train.set_defaults(func=train)
 
     # play
