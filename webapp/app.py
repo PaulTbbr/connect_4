@@ -108,9 +108,23 @@ def move():
         state = game.get_next_state(state, action, player)
 
     value, done = game.get_value_and_terminated(state, action)
+    win_positions = []
+    if done and value == 1:
+        win_positions = game.get_win_positions(state, action)
+        # Convert numpy arrays/int64 to regular Python types for JSON serialization
+        if win_positions:
+            win_positions = [[int(r), int(c)] for r, c in win_positions]
+
     board = state.tolist()
     player = game.get_opponent(player)
-    return jsonify({'board': board, 'player': player, 'done': done, 'winner': player if value == 1 else None})
+
+    return jsonify({
+        'board': board,
+        'player': int(player),  # ensure this is also a regular int
+        'done': done,
+        'winner': int(player) if value == 1 else None,
+        'win_positions': win_positions
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

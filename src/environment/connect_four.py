@@ -75,6 +75,40 @@ class ConnectFour(GridGame):
         print("  └" + "────┴" * (self.n_cols - 1) + "────┘")
         print()
 
+    def get_win_positions(self, state, action):
+        """
+        If the last move caused a win, return a list of (row, col) tuples
+        for the four connected discs. Otherwise return [].
+        """
+        if action is None:
+            return []
+
+        row = np.min(np.where(state[:, action] != 0))
+        player = state[row, action]
+        directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
+
+        for dr, dc in directions:
+            positions = [(row, action)]
+            # Check in the positive direction
+            for i in range(1, self.in_a_row):
+                r, c = row + dr * i, action + dc * i
+                if 0 <= r < self.n_rows and 0 <= c < self.n_cols and state[r, c] == player:
+                    positions.append((r, c))
+                else:
+                    break
+            # Check in the negative direction
+            for i in range(1, self.in_a_row):
+                r, c = row - dr * i, action - dc * i
+                if 0 <= r < self.n_rows and 0 <= c < self.n_cols and state[r, c] == player:
+                    positions.append((r, c))
+                else:
+                    break
+            if len(positions) >= self.in_a_row:
+                # Return the first four in sorted order
+                positions.sort()
+                return positions[:self.in_a_row]
+        return []
+
 
 if __name__ == "__main__":
     game = ConnectFour()

@@ -1,13 +1,13 @@
 let currentPlayer = 1;
 let gameMode = 'human';
 const boardDiv = document.getElementById('board');
+const messageDiv = document.getElementById('message');
+const winnerMessageDiv = document.getElementById('winner-message');
+let gameOver = false;
 
 function render(board) {
   boardDiv.innerHTML = '';
-  boardDiv.style.gridTemplateRows = `repeat(${board.length}, 80px)`;
-  boardDiv.style.gridTemplateColumns = `repeat(${board[0].length}, 80px)`;
   boardDiv.style.display = 'grid';
-  boardDiv.style.gap = '5px';
 
   board.forEach((row, rowIndex) => {
     row.forEach((cell, colIndex) => {
@@ -21,10 +21,21 @@ function render(board) {
   });
 }
 
+function highlightWin(positions) {
+  // boardDiv.children is a flat list of 6*7 cells, row‑major
+  positions.forEach(([r, c]) => {
+    const idx = r * 7 + c;
+    boardDiv.children[idx].classList.add('win');
+  });
+}
+
 async function startGame() {
   const mode = document.getElementById('mode').value;
   const modelPath = document.getElementById('model_path').value;
   gameMode = mode;
+  gameOver = false;
+  messageDiv.style.display = 'none';
+  winnerMessageDiv.textContent = '';
   const resp = await fetch('/setup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -50,11 +61,26 @@ async function makeMove(col, human) {
   const data = await resp.json();
   if (data.error) return alert(data.error);
   render(data.board);
-  if (data.done) return alert(data.winner ? `Player ${data.winner} wins!` : 'Draw');
+  if (data.done) {
+    // show winner message under the board
+    winnerMessageDiv.textContent = data.winner
+      ? `Player ${data.winner} wins!`
+      : 'Draw!';
+
+    // highlight the four winning cells
+    if (data.win_positions) {
+      highlightWin(data.win_positions);
+    }
+
+    // freeze further play
+    gameOver = true;
+    return;
+  }
   currentPlayer = data.player;
 }
 
 function handleClick(event) {
+  if (gameOver) return;          // stop clicks once game is over
   // ignore clicks if it's AI's turn
   if (gameMode !== 'human' && currentPlayer !== 1) return;
 
@@ -70,5 +96,6 @@ function handleClick(event) {
     }
   });
 }
+
 
 document.getElementById('start').onclick = startGame;
