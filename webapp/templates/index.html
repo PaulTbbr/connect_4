@@ -3,22 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Connect Four</title>
+  <title>Connect Four AI</title>
   <link rel="stylesheet" href="/static/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="controls">
-    <select id="mode">
-      <option value="human">Human vs Human</option>
-      <option value="mcts">Human vs MCTS</option>
-      <option value="alpha_mcts">Human vs Alpha-MCTS</option>
-    </select>
-    <input id="model_path" type="text" placeholder="Model path for Alpha" />
-    <button id="start">Start</button>
+  <div class="game-container">
+    <h1 class="game-title">Connect Four AI</h1>
+    <p class="game-subtitle">Powered by AlphaZero & MCTS</p>
+    
+    <div class="controls">
+      <select id="mode" class="control-select">
+        <option value="human">Human vs Human</option>
+        <option value="mcts">Human vs MCTS</option>
+        <option value="alpha_mcts">Human vs Alpha-MCTS</option>
+      </select>
+      <input id="model_path" type="text" placeholder="Model path for Alpha" class="control-input" />
+      <button id="start" class="btn btn-primary">Start Game</button>
+    </div>
+    
+    <div class="game-status">
+      <div class="current-player" id="status">
+        <span class="player-indicator player-1"></span>
+        Player 1's Turn
+      </div>
+    </div>
+    
+    <div id="message" class="message"></div>
+    
+    <div class="column-indicators" id="columnIndicators"></div>
+    <div id="board" class="board"></div>
+    <div id="winner-message" class="winner-message"></div>
   </div>
-  <div id="message" class="message"></div>
-  <div id="board" class="board"></div>
-  <div id="winner-message" class="winner-message"></div>
   <script src="/static/script.js"></script>
 </body>
 </html>

@@ -1,65 +1,322 @@
-body {
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
   margin: 0;
-  background: linear-gradient(135deg, #2e1a4c, #1f0033);
-  background-size: cover;
-  font-family: sans-serif;
-  color: #fff;
-  position: relative;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #1a1b3a 0%, #2d1b69 25%, #4a2c85 50%, #6a4c93 75%, #8b5a9f 100%);
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 2vh 0 0 0;
-}
-.controls { 
-  padding: 1rem; 
-  display: flex; 
-  gap: 1rem; 
-  position: relative; 
-  z-index: 1; 
-  flex-shrink: 0;
-  width: 100%;
   justify-content: center;
-  margin-bottom: 1rem;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
 }
+
+/* Grain texture overlay */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 0.5px, transparent 0.5px);
+  background-size: 50px 50px, 30px 30px, 20px 20px;
+  background-position: 0 0, 25px 25px, 10px 10px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.game-container {
+  background: rgba(26, 27, 58, 0.3);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.game-title {
+  text-align: center;
+  color: #ffffff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #ff6b6b, #ffa726, #ffcc02);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px rgba(255, 171, 38, 0.3);
+}
+
+.game-subtitle {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  margin-bottom: 30px;
+  font-weight: 300;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.control-select, .control-input {
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.control-select:focus, .control-input:focus {
+  outline: none;
+  border-color: rgba(255, 167, 38, 0.5);
+  box-shadow: 0 0 20px rgba(255, 167, 38, 0.2);
+}
+
+.control-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ff6b6b, #ffa726);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+}
+
+.game-status {
+  text-align: center;
+  margin-bottom: 25px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.current-player {
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.player-indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+.player-1 { 
+  background: linear-gradient(135deg, #ff6b6b, #d63384); 
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+}
+.player-2 { 
+  background: linear-gradient(135deg, #ffa726, #ffcc02); 
+  box-shadow: 0 0 20px rgba(255, 167, 38, 0.4);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.column-indicators {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: min(1vw, 8px);
+  margin: 0 auto 15px auto;
+  max-width: min(80vw, 70vh);
+  padding: 0 25px;
+}
+
+.column-indicator {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.column-indicator:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scaleY(1.5);
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(6, 1fr);
-  gap: min(1vw, 1vh);
-  padding: 1rem;
+  gap: min(1vw, 8px);
+  background: rgba(45, 27, 105, 0.6);
+  padding: 25px;
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
   position: relative;
-  z-index: 1;
+  margin: 0 auto;
   width: min(80vw, 70vh);
   height: min(68.57vw, 60vh);
   aspect-ratio: 7/6;
 }
+
+.board::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05) 1px, transparent 1px),
+    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 25px 25px, 35px 35px;
+  border-radius: 18px;
+  pointer-events: none;
+}
+
 .cell {
-  width: 100%; 
+  width: 100%;
   height: 100%;
-  background: rgba(255,255,255,0.1);
   border-radius: 50%;
-  position: relative;
+  background: rgba(26, 27, 58, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
-  backdrop-filter: blur(2px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
   aspect-ratio: 1/1;
 }
-.cell.red { background: radial-gradient(circle, #ff805d 40%, #8f1b8f 90%); }
-.cell.yellow { background: radial-gradient(circle, #ffd86d 40%, #ff9f1a 90%); }
+
+.cell:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.cell.red {
+  background: linear-gradient(135deg, #ff6b6b, #d63384);
+  border-color: #ff8a95;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 25px rgba(255, 107, 107, 0.4);
+  animation: dropIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.cell.yellow {
+  background: linear-gradient(135deg, #ffa726, #ffcc02);
+  border-color: #ffb74d;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 25px rgba(255, 167, 38, 0.4);
+  animation: dropIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
 .cell.win {
-  box-shadow: 0 0 0 5px rgba(255, 255, 0, 0.8);
+  animation: winning 1s ease-in-out infinite alternate;
 }
-/* subtle grain overlay */
-.board::after, body::after {
-  content: "";
-  position: absolute;
-  top:0;left:0;right:0;bottom:0;
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAA');
-  opacity: 0.05;
-  pointer-events: none;
-  z-index: 0;
+
+@keyframes dropIn {
+  0% {
+    transform: translateY(-200px) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(10px) scale(1.1);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
+
+@keyframes winning {
+  from {
+    transform: scale(1);
+    box-shadow: 
+      inset 0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 25px rgba(255, 255, 255, 0.6);
+  }
+  to {
+    transform: scale(1.1);
+    box-shadow: 
+      inset 0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(255, 255, 255, 0.8);
+  }
+}
+
+.winner-message {
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.winner-message:not(:empty) {
+  animation: gameOverGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes gameOverGlow {
+  from {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+  }
+  to {
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+  }
+}
+
 .message {
   position: absolute;
   top: 20px;
@@ -74,14 +331,23 @@ body {
   z-index: 2;
 }
 
-.winner-message {
-  text-align: center;
-  padding: 0.5rem;
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #fff;
-  min-height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .game-container {
+    padding: 20px;
+  }
+  
+  .game-title {
+    font-size: 2rem;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .control-select, .control-input {
+    width: 100%;
+    max-width: 300px;
+  }
 }

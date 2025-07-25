@@ -3,7 +3,28 @@ let gameMode = 'human';
 const boardDiv = document.getElementById('board');
 const messageDiv = document.getElementById('message');
 const winnerMessageDiv = document.getElementById('winner-message');
+const statusDiv = document.getElementById('status');
+const columnIndicatorsDiv = document.getElementById('columnIndicators');
 let gameOver = false;
+
+function createColumnIndicators() {
+  columnIndicatorsDiv.innerHTML = '';
+  for (let col = 0; col < 7; col++) {
+    const indicator = document.createElement('div');
+    indicator.className = 'column-indicator';
+    indicator.onclick = () => handleColumnClick(col);
+    columnIndicatorsDiv.appendChild(indicator);
+  }
+}
+
+function updateGameStatus() {
+  if (gameOver) return;
+  
+  statusDiv.innerHTML = `
+    <span class="player-indicator player-${currentPlayer}"></span>
+    Player ${currentPlayer}'s Turn
+  `;
+}
 
 function render(board) {
   boardDiv.innerHTML = '';
@@ -13,9 +34,11 @@ function render(board) {
     row.forEach((cell, colIndex) => {
       const div = document.createElement('div');
       div.classList.add('cell');
+      div.dataset.row = rowIndex;
+      div.dataset.col = colIndex;
       if (cell === 1) div.classList.add('red');
       if (cell === -1) div.classList.add('yellow');
-      div.addEventListener('click', handleClick);
+      div.addEventListener('click', () => handleColumnClick(colIndex));
       boardDiv.appendChild(div);
     });
   });
@@ -36,6 +59,9 @@ async function startGame() {
   gameOver = false;
   messageDiv.style.display = 'none';
   winnerMessageDiv.textContent = '';
+  
+  createColumnIndicators();
+  
   const resp = await fetch('/setup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -46,6 +72,7 @@ async function startGame() {
     return alert(`Setup error: ${data.error}`);
   }
   currentPlayer = 1;
+  updateGameStatus();
   const empty = Array.from({length:6}, () => Array(7).fill(0));
   render(empty);
 }
@@ -77,24 +104,26 @@ async function makeMove(col, human) {
     return;
   }
   currentPlayer = data.player;
+  updateGameStatus();
 }
 
-function handleClick(event) {
+function handleColumnClick(col) {
   if (gameOver) return;          // stop clicks once game is over
   // ignore clicks if it's AI's turn
   if (gameMode !== 'human' && currentPlayer !== 1) return;
 
-  const cells = Array.from(boardDiv.children);
-  const idx = cells.indexOf(event.currentTarget);
-  const col = idx % 7;
-
   // human move
   makeMove(col, true).then(() => {
     // after human move, if AI mode, do AI move
-    if (gameMode !== 'human') {
+    if (gameMode !== 'human' && !gameOver) {
       makeMove(null, false);
     }
   });
+}
+
+function handleClick(event) {
+  const col = parseInt(event.currentTarget.dataset.col);
+  handleColumnClick(col);
 }
 
 
