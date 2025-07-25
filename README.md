@@ -2,7 +2,9 @@
 
 An AlphaZero implementation for playing Connect Four with a web interface.
 
-![Connect Four AI](assets/image.png)
+<p align="center">
+    <img src="assets/image.png" alt="Connect Four AI" width="350"/>
+</p>
 
 
 
