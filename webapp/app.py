@@ -16,7 +16,7 @@ DEFAULT_MCTS_PARAMS = {
     "n_searches": 1000,
     "n_rollouts": 1,
     "dirichlet_epsilon": 0,
-    "temperature": 1.,
+    "temperature": 0.,
     "dirichlet_alpha": 0.03,
 }
 # default checkpoint directory (relative to repo root)
