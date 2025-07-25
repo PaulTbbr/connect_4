@@ -20,9 +20,12 @@ function createColumnIndicators() {
 function updateGameStatus() {
   if (gameOver) return;
   
+  // Convert -1 to 2 for display purposes
+  const displayPlayer = currentPlayer === -1 ? 2 : currentPlayer;
+  
   statusDiv.innerHTML = `
-    <span class="player-indicator player-${currentPlayer}"></span>
-    Player ${currentPlayer}'s Turn
+    <span class="player-indicator player-${displayPlayer}"></span>
+    Player ${displayPlayer}'s Turn
   `;
 }
 
@@ -90,9 +93,13 @@ async function makeMove(col, human) {
   render(data.board);
   if (data.done) {
     // show winner message under the board
-    winnerMessageDiv.textContent = data.winner
-      ? `Player ${data.winner} wins!`
-      : 'Draw!';
+    if (data.winner) {
+      // Convert winner value for display (backend sends -1 for player 2)
+      const displayWinner = data.winner === -1 ? 2 : data.winner;
+      winnerMessageDiv.textContent = `Player ${displayWinner} wins!`;
+    } else {
+      winnerMessageDiv.textContent = 'Draw!';
+    }
 
     // highlight the four winning cells
     if (data.win_positions) {

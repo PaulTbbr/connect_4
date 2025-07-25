@@ -109,7 +109,10 @@ def move():
 
     value, done = game.get_value_and_terminated(state, action)
     win_positions = []
+    winner = None
     if done and value == 1:
+        # The winner is the current player who just made the winning move
+        winner = int(player)
         win_positions = game.get_win_positions(state, action)
         # Convert numpy arrays/int64 to regular Python types for JSON serialization
         if win_positions:
@@ -122,7 +125,7 @@ def move():
         'board': board,
         'player': int(player),  # ensure this is also a regular int
         'done': done,
-        'winner': int(player) if value == 1 else None,
+        'winner': winner,
         'win_positions': win_positions
     })
 
